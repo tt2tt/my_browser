@@ -4,16 +4,17 @@ import sys
 
 # 外部ライブラリ
 import PySide6
-from PySide6.QtWidgets import QApplication,QWidget,QVBoxLayout
+from PySide6.QtWidgets import QApplication,QWidget,QVBoxLayout,QMainWindow
 from PySide6.QtCore import QUrl
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 # デフォルトのウインドウ
-class MainWindow(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         # 親クラスの初期化
-        super().__init__(parent)
+        QMainWindow.__init__(self)
         self.setWindowTitle("My Browser")
+        self.widget = QWidget(self)
 
         # Webページの読み込み
         self.webview = QWebEngineView()
