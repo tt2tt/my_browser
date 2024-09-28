@@ -11,6 +11,7 @@ class MainWindow(QWidget):
     def __init__(self, parent=None):
         # 親クラスの初期化
         super().__init__(parent)
+        self.setWindowTitle("My Browser")
 
 # メイン処理
 if __name__ == "__main__":
