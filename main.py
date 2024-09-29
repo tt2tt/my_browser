@@ -21,6 +21,12 @@ class MainWindow(QMainWindow):
         self.webview.load(QUrl("https://www.google.co.jp/"))
         self.webview.urlChanged.connect(self.url_changed)
 
+        # ナビゲーション部分
+        self.back_button = QPushButton("<")
+        self.back_button.clicked.connect(self.webview.back)
+        self.forward_button = QPushButton(">")
+        self.forward_button.clicked.connect(self.webview.forward)
+
         # アドレスバー部分
         self.url_text = QLineEdit()
         self.search_button = QPushButton("検索")
@@ -28,6 +34,8 @@ class MainWindow(QMainWindow):
 
         # トップレイアウトの作成
         self.toplayout = QHBoxLayout()
+        self.toplayout.addWidget(self.back_button)
+        self.toplayout.addWidget(self.forward_button)
         self.toplayout.addWidget(self.url_text)
         self.toplayout.addWidget(self.search_button)
 
