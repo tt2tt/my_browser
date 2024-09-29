@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
         # アドレスバー部分
         self.url_text = QLineEdit()
         self.search_button = QPushButton("検索")
+        self.search_button.clicked.connect(self.url_set)
 
         # トップレイアウトの作成
         self.toplayout = QHBoxLayout()
@@ -41,8 +42,11 @@ class MainWindow(QMainWindow):
 
     # アドレスバーのURL変更
     def url_changed(self, url):
-        """Refresh the address bar"""
         self.url_text.setText(url.toString())
+
+    # 検索の実行
+    def url_set(self):
+        self.webview.setUrl(QUrl(self.url_text.text()))
 
 
 # メイン処理
