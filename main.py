@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
 
         # Webページの読み込み
         self.webview = QWebEngineView()
-        self.webview.load(QUrl("https://www.python.org/"))
+        self.webview.load(QUrl("https://www.google.co.jp/"))
         self.webview.urlChanged.connect(self.url_changed)
 
         # アドレスバー部分
