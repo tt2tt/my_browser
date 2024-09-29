@@ -26,6 +26,9 @@ class MainWindow(QMainWindow):
         self.back_button.clicked.connect(self.webview.back)
         self.forward_button = QPushButton(">")
         self.forward_button.clicked.connect(self.webview.forward)
+        self.refresh_button = QPushButton("再読み込み")
+        self.refresh_button.clicked.connect(self.webview.reload)
+
 
         # アドレスバー部分
         self.url_text = QLineEdit()
@@ -36,6 +39,7 @@ class MainWindow(QMainWindow):
         self.toplayout = QHBoxLayout()
         self.toplayout.addWidget(self.back_button)
         self.toplayout.addWidget(self.forward_button)
+        self.toplayout.addWidget(self.refresh_button)
         self.toplayout.addWidget(self.url_text)
         self.toplayout.addWidget(self.search_button)
 
