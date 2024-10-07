@@ -7,6 +7,7 @@ import PySide6
 from PySide6.QtWidgets import QApplication,QWidget,QVBoxLayout,QMainWindow,QLineEdit,QPushButton,QHBoxLayout
 from PySide6.QtCore import QUrl
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWebEngineCore import QWebEngineSettings
 
 # デフォルトのウインドウ
 class MainWindow(QMainWindow):
@@ -18,6 +19,11 @@ class MainWindow(QMainWindow):
 
         # Webページの読み込み
         self.webview = QWebEngineView()
+
+        # PDFの表示
+        self.webview.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
+        self.webview.settings().setAttribute(QWebEngineSettings.PdfViewerEnabled, True)
+        
         self.webview.load(QUrl("https://www.google.co.jp/"))
         self.webview.urlChanged.connect(self.url_changed)
 
