@@ -15,6 +15,8 @@ class MainWindow(QMainWindow):
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
         self.tabs.setMovable(True)
+        self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self.close_tab)
 
         # ツールバーを作成
         self.toolbar = QToolBar("メインツールバー")
@@ -32,10 +34,16 @@ class MainWindow(QMainWindow):
         add_tab_action.clicked.connect(self.add_new_tab)
         self.toolbar.addWidget(add_tab_action)
 
+    # タブの追加
     def add_new_tab(self):
         self.tab_counter += 1
         self.browser_tab = BrowserTab()
         self.tabs.addTab(self.browser_tab, "新しいタブ")
+
+    # タブの削除
+    def close_tab(self, index):
+        if self.tabs.count() > 1:
+            self.tabs.removeTab(index)
 
 
 if __name__ == "__main__":
