@@ -14,6 +14,7 @@ class MainWindow(QMainWindow):
         # タブウィジェット
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
+        self.tabs.setMovable(True)
 
         # ツールバーを作成
         self.toolbar = QToolBar("メインツールバー")
