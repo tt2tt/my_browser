@@ -21,6 +21,16 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar("メインツールバー")
         self.addToolBar(self.toolbar)
 
+        # 戻るボタン
+        self.back_button = QPushButton("戻る")
+        self.back_button.clicked.connect(browser_tab.web_view.back)
+        self.toolbar.addWidget(self.back_button)
+
+        # 進むボタン
+        self.forward_button = QPushButton("進む")
+        self.forward_button.clicked.connect(browser_tab.web_view.forward)
+        self.toolbar.addWidget(self.forward_button)
+
         # 再読込みボタンを作成
         self.reload_button = QPushButton("再読み込み")
         self.reload_button.clicked.connect(browser_tab.reload_page)
