@@ -21,6 +21,11 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar("メインツールバー")
         self.addToolBar(self.toolbar)
 
+        # 再読込みボタンを作成
+        self.reload_button = QPushButton("再読み込み")
+        self.reload_button.clicked.connect(browser_tab.reload_page)
+        self.toolbar.addWidget(self.reload_button)
+
         # URLバー
         self.url_bar = QLineEdit()
         self.url_bar.setPlaceholderText("URLを入力して下さい")

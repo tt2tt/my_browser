@@ -16,3 +16,7 @@ class BrowserTab(QWidget):
         if not url.startswith("http://") and not url.startswith("https://"):
             url = "http://" + url
         self.web_view.setUrl(QUrl(url))
+
+    # 再読み込み
+    def reload_page(self):
+        self.web_view.reload()
