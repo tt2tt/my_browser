@@ -8,9 +8,12 @@ class BrowserTab(QWidget):
         super().__init__()
         self.layout = QVBoxLayout()
         self.web_view = QWebEngineView()
+        # 初期ページの設定
+        self.web_view.setUrl("https://www.google.com")
+
+        # PDF表示機能の有効化
         self.web_view.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
         self.web_view.settings().setAttribute(QWebEngineSettings.PdfViewerEnabled, True)
-        self.web_view.setUrl("https://www.google.com")
         self.layout.addWidget(self.web_view)
         self.setLayout(self.layout)
 
