@@ -15,6 +15,9 @@ class BrowserTab(QWidget):
         self.web_view.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
         self.web_view.settings().setAttribute(QWebEngineSettings.PdfViewerEnabled, True)
 
+        # ページタイトルの変更を検知
+        self.web_view.titleChanged.connect(self.on_title_changed)
+
         # ツールバーを作成
         self.toolbar = QToolBar("メインツールバー")
 
@@ -49,6 +52,14 @@ class BrowserTab(QWidget):
         if not url.startswith("http://") and not url.startswith("https://"):
             url = "http://" + url
         self.web_view.setUrl(QUrl(url))
+
+    # 画面変更時の処理
+    def on_title_changed(self):
+        # URLを取得
+        url = self.web_view.url().toString()
+
+        # アドレスバーのURLを変更
+        self.url_bar.setText(url)
 
     # 再読み込み
     def reload_page(self):
