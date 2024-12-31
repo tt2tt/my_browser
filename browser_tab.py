@@ -1,7 +1,7 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QToolBar, QPushButton, QLineEdit
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QToolBar, QPushButton, QLineEdit, QFileDialog
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtCore import QUrl
-from PySide6.QtWebEngineCore import QWebEngineSettings
+from PySide6.QtWebEngineCore import QWebEngineSettings, QWebEngineDownloadRequest
 
 class BrowserTab(QWidget):
     def __init__(self):
@@ -14,6 +14,9 @@ class BrowserTab(QWidget):
         # PDF表示機能の有効化
         self.web_view.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
         self.web_view.settings().setAttribute(QWebEngineSettings.PdfViewerEnabled, True)
+
+        # ダウンロード要求のシグナル接続
+        self.web_view.page().profile().downloadRequested.connect(self.on_download_requested)
 
         # ページタイトルの変更を検知
         self.web_view.titleChanged.connect(self.on_title_changed)
@@ -64,3 +67,13 @@ class BrowserTab(QWidget):
     # 再読み込み
     def reload_page(self):
         self.web_view.reload()
+
+    # ダウンロード
+    def on_download_requested(self, download: QWebEngineDownloadRequest):
+        # 保存先、保存ファイル名の選択
+        save_path, _ = QFileDialog.getSaveFileName(self, "Save File",download.downloadDirectory() + r"/" + download.suggestedFileName())
+
+        if save_path:
+            # ダウンロード先を指定して開始
+            download.setDownloadFileName(save_path)
+            download.accept()
