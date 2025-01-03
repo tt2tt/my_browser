@@ -2,6 +2,8 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QToolBar, QPushButton, QLine
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtCore import QUrl
 from PySide6.QtWebEngineCore import QWebEngineSettings, QWebEngineDownloadRequest
+from tinydb import TinyDB, Query
+from datetime import datetime
 
 class BrowserTab(QWidget):
     def __init__(self):
@@ -49,6 +51,9 @@ class BrowserTab(QWidget):
         self.layout.addWidget(self.web_view)
         self.setLayout(self.layout)
 
+        # DB設定（日本語をそのまま保存）
+        self.history = TinyDB("./data/history.json")
+
     # URLの検索
     def load_url(self):
         url = self.url_bar.text()
@@ -58,11 +63,16 @@ class BrowserTab(QWidget):
 
     # 画面変更時の処理
     def on_title_changed(self):
-        # URLを取得
+        # ページのタイトルとURLを取得
+        title = self.web_view.title()
         url = self.web_view.url().toString()
 
         # アドレスバーのURLを変更
         self.url_bar.setText(url)
+
+        # 履歴の保存
+        if "http" not in title and "Google" not in title:
+            self.history.insert({"datetime":str(datetime.now()), "title": title, "url": url})
 
     # 再読み込み
     def reload_page(self):
