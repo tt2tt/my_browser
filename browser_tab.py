@@ -5,15 +5,17 @@ from PySide6.QtWebEngineCore import QWebEngineSettings, QWebEngineDownloadReques
 from tinydb import TinyDB, Query
 from datetime import datetime
 
-from table_tab import TableTab
-
 class BrowserTab(QWidget):
-    def __init__(self):
+    def __init__(self, url=""):
         super().__init__()
         self.layout = QVBoxLayout()
         self.web_view = QWebEngineView()
+
         # 初期ページの設定
-        self.web_view.setUrl("https://www.google.com")
+        if url == "":
+            self.web_view.setUrl("https://www.google.com")
+        else:
+            self.web_view.setUrl(url)
 
         # PDF表示機能の有効化
         self.web_view.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)

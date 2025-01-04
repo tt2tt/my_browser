@@ -49,11 +49,13 @@ class MainWindow(QMainWindow):
         self.add_new_tab("新しいタブ")
 
     # タブの追加
-    def add_new_tab(self, tab_name):
+    def add_new_tab(self, tab_name = "", url = ""):
         if tab_name == "新しいタブ":
             tab = BrowserTab()
         elif tab_name == "履歴":
-            tab = TableTab()
+            tab = TableTab(main_window)
+        elif url != "":
+            tab = BrowserTab(url=url)
         
         self.tab_counter += 1
         self.tabs.addTab(tab, tab_name)
