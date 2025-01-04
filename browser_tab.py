@@ -5,6 +5,8 @@ from PySide6.QtWebEngineCore import QWebEngineSettings, QWebEngineDownloadReques
 from tinydb import TinyDB, Query
 from datetime import datetime
 
+from table_tab import TableTab
+
 class BrowserTab(QWidget):
     def __init__(self):
         super().__init__()
@@ -72,7 +74,8 @@ class BrowserTab(QWidget):
 
         # 履歴の保存
         if "http" not in title and "Google" not in title:
-            self.history.insert({"datetime":str(datetime.now()), "title": title, "url": url})
+            print(datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"))
+            self.history.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": title, "url": url})
 
     # 再読み込み
     def reload_page(self):
