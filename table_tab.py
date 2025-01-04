@@ -40,8 +40,12 @@ class TableTab(QWidget):
             self.table.setItem(i, 0, QTableWidgetItem(record.get("datetime", "")))
             self.table.setItem(i, 1, QTableWidgetItem(record.get("title", "")))
             self.table.setItem(i, 2, QTableWidgetItem(record.get("url", "")))
+            self.table.setItem(i, 3, QTableWidgetItem("遷移"))
+        
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.cellClicked.connect(self.on_cell_clicked)
 
-            # 遷移ボタン
-            transition_button = QPushButton("遷移")
-            transition_button.clicked.connect(lambda: self.main_window.add_new_tab(url=record.get("url", "")))
-            self.table.setCellWidget(i, 3, transition_button)
+    # セルクリック時の処理
+    def on_cell_clicked(self, row, column):
+        if column == 3:
+            self.main_window.add_new_tab(url = self.history.get(doc_id=row + 1)["url"])
