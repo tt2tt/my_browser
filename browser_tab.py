@@ -6,10 +6,13 @@ from tinydb import TinyDB, Query
 from datetime import datetime
 
 class BrowserTab(QWidget):
-    def __init__(self, url=""):
+    def __init__(self, main_window, url=""):
         super().__init__()
         self.layout = QVBoxLayout()
         self.web_view = QWebEngineView()
+
+        # 別クラス
+        self.main_window = main_window
 
         # 初期ページの設定
         if url == "":
@@ -74,9 +77,12 @@ class BrowserTab(QWidget):
         # アドレスバーのURLを変更
         self.url_bar.setText(url)
 
-        # 履歴の保存
+        # Webページに遷移時の処理
         if "http" not in title and "Google" not in title:
-            print(datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"))
+            # タブ名を同期
+            self.main_window.tab_name_synchronization(title[1:9])
+
+            # 履歴の保存
             self.history.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": title, "url": url})
 
     # 再読み込み

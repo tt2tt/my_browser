@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
         history_menu.addAction(history_action)
 
         # タブ追加ボタン
-        self.tab_counter = 1
+        self.tab_counter = 0
         self.add_tab_button = QPushButton("+")
         self.add_tab_button.setFixedSize(25, 25)
         self.add_tab_button.clicked.connect(lambda: self.add_new_tab("新しいタブ"))
@@ -45,20 +45,23 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.add_tab_button)
         layout.setContentsMargins(0, 0, 0, 0)
 
-        # 初期タブ
-        self.add_new_tab("新しいタブ")
-
     # タブの追加
     def add_new_tab(self, tab_name = "", url = ""):
         if tab_name == "新しいタブ":
-            tab = BrowserTab()
+            tab = BrowserTab(main_window)
         elif tab_name == "履歴":
             tab = TableTab(main_window)
         elif url != "":
-            tab = BrowserTab(url=url)
+            tab = BrowserTab(main_window,url=url)
         
-        self.tab_counter += 1
         self.tabs.addTab(tab, tab_name)
+        self.tabs.setCurrentIndex(self.tab_counter) 
+        self.tab_counter += 1
+
+    # タブ名の同期
+    def tab_name_synchronization(self,tab_name):
+        current_index = self.tabs.currentIndex()
+        self.tabs.setTabText(current_index, tab_name)
 
     # タブの削除
     def close_tab(self, index):
@@ -70,5 +73,6 @@ if __name__ == "__main__":
     # メインウインドウの呼び出し
     app = QApplication(sys.argv)
     main_window = MainWindow()
+    main_window.add_new_tab("新しいタブ")
     main_window.show()
     sys.exit(app.exec())
