@@ -14,8 +14,8 @@ class TableTab(QWidget):
 
         # テーブルウィジェットを作成
         self.table = QTableWidget()
-        self.table.setColumnCount(4)
-        self.table.setHorizontalHeaderLabels(["日時", "ページ", "URL", "遷移"])
+        self.table.setColumnCount(5)
+        self.table.setHorizontalHeaderLabels(["日時", "ページ", "URL", "遷移", "削除"])
 
         # テーブルの列幅をウィンドウサイズに合わせて調整
         header = self.table.horizontalHeader()
@@ -23,6 +23,7 @@ class TableTab(QWidget):
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(2, QHeaderView.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
 
         # テーブルを更新
         self.update_table()
@@ -41,6 +42,7 @@ class TableTab(QWidget):
             self.table.setItem(i, 1, QTableWidgetItem(record.get("title", "")))
             self.table.setItem(i, 2, QTableWidgetItem(record.get("url", "")))
             self.table.setItem(i, 3, QTableWidgetItem("遷移"))
+            self.table.setItem(i, 4, QTableWidgetItem("削除"))
         
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.cellClicked.connect(self.on_cell_clicked)
@@ -48,4 +50,11 @@ class TableTab(QWidget):
     # セルクリック時の処理
     def on_cell_clicked(self, row, column):
         if column == 3:
-            self.main_window.add_new_tab(url = self.history.get(doc_id=row + 1)["url"])
+            self.main_window.add_new_tab(url = self.history.all()[row]["url"])
+        if column == 4:
+            self.delete_record(row + 1)
+
+    def delete_record(self, doc_id):
+        """指定されたIDのデータを削除"""
+        self.history.remove(doc_ids=[doc_id])
+        self.update_table()
