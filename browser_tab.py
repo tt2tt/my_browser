@@ -4,6 +4,7 @@ from PySide6.QtCore import QUrl
 from PySide6.QtWebEngineCore import QWebEngineSettings, QWebEngineDownloadRequest
 from tinydb import TinyDB, Query
 from datetime import datetime
+import qtawesome as qta
 
 class BrowserTab(QWidget):
     def __init__(self, main_window, url=""):
@@ -34,17 +35,20 @@ class BrowserTab(QWidget):
         self.toolbar = QToolBar("メインツールバー")
 
         # 戻るボタン
-        self.back_button = QPushButton("戻る")
+        self.back_button = QPushButton("")
+        self.back_button.setIcon(qta.icon("fa5s.arrow-left", color="white"))
         self.back_button.clicked.connect(self.web_view.back)
         self.toolbar.addWidget(self.back_button)
 
         # 進むボタン
-        self.forward_button = QPushButton("進む")
+        self.forward_button = QPushButton("")
+        self.forward_button.setIcon(qta.icon("fa5s.arrow-right", color="white"))
         self.forward_button.clicked.connect(self.web_view.forward)
         self.toolbar.addWidget(self.forward_button)
 
         # 再読込みボタンを作成
-        self.reload_button = QPushButton("再読み込み")
+        self.reload_button = QPushButton("")
+        self.reload_button.setIcon(qta.icon("fa5s.undo", color="white"))
         self.reload_button.clicked.connect(self.reload_page)
         self.toolbar.addWidget(self.reload_button)
 
