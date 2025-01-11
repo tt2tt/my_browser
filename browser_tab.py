@@ -89,7 +89,7 @@ class BrowserTab(QWidget):
         self.url_bar.setText(url)
 
         # Webページに遷移時の処理
-        if "http" not in title and "Google" not in title:
+        if "http" not in title and "Google" not in title and "google" not in title:
             # タブ名を同期
             self.main_window.tab_name_synchronization(title[1:9])
 
