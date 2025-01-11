@@ -29,8 +29,11 @@ class MainWindow(QMainWindow):
         # メニューにアクションを追加
         history_action = QAction("履歴", self)
         history_action.triggered.connect(lambda: self.add_new_tab("履歴"))
+        bookmark_action = QAction("ブックマーク", self)
+        bookmark_action.triggered.connect(lambda: self.add_new_tab("ブックマーク"))
 
         history_menu.addAction(history_action)
+        history_menu.addAction(bookmark_action)
 
         # タブ追加ボタン
         self.tab_counter = 0
@@ -50,7 +53,9 @@ class MainWindow(QMainWindow):
         if tab_name == "新しいタブ":
             tab = BrowserTab(main_window)
         elif tab_name == "履歴":
-            tab = TableTab(main_window)
+            tab = TableTab(main_window, tab_name)
+        elif tab_name == "ブックマーク":
+            tab = TableTab(main_window, tab_name)
         elif url != "":
             tab = BrowserTab(main_window,url=url)
         
