@@ -18,6 +18,7 @@ class BrowserTab(QWidget):
         # DB設定（日本語をそのまま保存）
         self.history = TinyDB("./data/history.json")
         self.bookmark = TinyDB("./data/bookmark.json")
+        self.Query = Query()
 
         # 初期ページの設定
         if url == "":
@@ -101,6 +102,7 @@ class BrowserTab(QWidget):
 
             if title in bookmark_titles:
                 self.bookmark_button.setIcon(qta.icon("fa5s.star", color="blue"))
+                self.bookmark_button.clicked.connect(self.remove_bookmark)
 
     # 再読み込み
     def reload_page(self):
@@ -115,6 +117,15 @@ class BrowserTab(QWidget):
         # ブックマークの保存
         self.bookmark.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": title, "url": url})
         self.bookmark_button.setIcon(qta.icon("fa5s.star", color="blue"))
+        self.bookmark_button.clicked.connect(self.remove_bookmark)
+
+    # ブックマーク削除
+    def remove_bookmark(self):
+        # ページのタイトルを取得
+        title = self.web_view.title()
+        self.bookmark.remove(self.Query.title == title)
+        self.bookmark_button.setIcon(qta.icon("fa5s.star", color="white"))
+        self.bookmark_button.clicked.connect(self.add_bookmark)
 
     # ダウンロード
     def on_download_requested(self, download: QWebEngineDownloadRequest):
