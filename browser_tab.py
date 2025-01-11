@@ -96,6 +96,12 @@ class BrowserTab(QWidget):
             # 履歴の保存
             self.history.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": title, "url": url})
 
+            # ブックマークボタン判定
+            bookmark_titles = [bookmark["title"] for bookmark in self.bookmark.all()]
+
+            if title in bookmark_titles:
+                self.bookmark_button.setIcon(qta.icon("fa5s.star", color="blue"))
+
     # 再読み込み
     def reload_page(self):
         self.web_view.reload()
