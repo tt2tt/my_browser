@@ -15,6 +15,10 @@ class BrowserTab(QWidget):
         # 別クラス
         self.main_window = main_window
 
+        # DB設定（日本語をそのまま保存）
+        self.history = TinyDB("./data/history.json")
+        self.bookmark = TinyDB("./data/bookmark.json")
+
         # 初期ページの設定
         if url == "":
             self.web_view.setUrl("https://www.google.com")
@@ -58,12 +62,15 @@ class BrowserTab(QWidget):
         self.url_bar.returnPressed.connect(self.load_url)
         self.toolbar.addWidget(self.url_bar)
 
+        # ブックマークボタン
+        self.bookmark_button = QPushButton("")
+        self.bookmark_button.setIcon(qta.icon("fa5s.star", color="white"))
+        self.bookmark_button.clicked.connect(self.add_bookmark)
+        self.toolbar.addWidget(self.bookmark_button)
+
         self.layout.addWidget(self.toolbar)
         self.layout.addWidget(self.web_view)
         self.setLayout(self.layout)
-
-        # DB設定（日本語をそのまま保存）
-        self.history = TinyDB("./data/history.json")
 
     # URLの検索
     def load_url(self):
@@ -92,6 +99,16 @@ class BrowserTab(QWidget):
     # 再読み込み
     def reload_page(self):
         self.web_view.reload()
+
+    # ブックマーク追加
+    def add_bookmark(self):
+        # ページのタイトルとURLを取得
+        title = self.web_view.title()
+        url = self.web_view.url().toString()
+
+        # ブックマークの保存
+        self.bookmark.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": title, "url": url})
+        self.bookmark_button.setIcon(qta.icon("fa5s.star", color="blue"))
 
     # ダウンロード
     def on_download_requested(self, download: QWebEngineDownloadRequest):
