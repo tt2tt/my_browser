@@ -3,8 +3,8 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QTabWidget, QPushButton, QHBoxLayout
 from PySide6.QtGui import QAction
 
-from browser_tab import BrowserTab
-from table_tab import TableTab
+from my_package.browser_tab import BrowserTab
+from my_package.table_tab import TableTab
 
 class MainWindow(QMainWindow):
     """
