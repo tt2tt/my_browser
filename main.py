@@ -5,6 +5,7 @@ from PySide6.QtGui import QAction
 
 from my_package.browser_tab import BrowserTab
 from my_package.table_tab import TableTab
+from my_package.sub_package.my_logger import MyLogger
 
 class MainWindow(QMainWindow):
     """
@@ -122,10 +123,21 @@ class MainWindow(QMainWindow):
         if self.tabs.count() > 1:
             self.tabs.removeTab(tab_index)
 
+def on_exit():
+    """
+    終了時の処理
+    """
+    logger.info("処理終了")
+
 
 if __name__ == "__main__":
+    # ロガーの呼び出し
+    logger = MyLogger(log_file="./log/app.log", when="D", interval=1, backup_count=7).get_logger()
+    logger.info("処理開始")
+
     # メインウインドウの呼び出し
     app = QApplication(sys.argv)
+    app.aboutToQuit.connect(on_exit)
     main_window = MainWindow()
     main_window.select_new_tab("新しいタブ")
     main_window.show()
