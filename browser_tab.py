@@ -7,25 +7,64 @@ from datetime import datetime
 import qtawesome as qta
 
 class BrowserTab(QWidget):
+    """
+    ブラウザクラス
+    """
     def __init__(self, main_window, url=""):
+        """
+        クラスの初期化
+        attributes:
+            main_window: メインウインドウ
+            url: 検索URL
+        """
         super().__init__()
-        self.layout = QVBoxLayout()
+        # 引数受け取り
+        self.main_window = main_window
+        self.url = url
+
+        # インスタンス変数初期化
+        self.history_db = ""
+        self.bookmark_db = ""
+        self.Query = ""
+        self.web_view = ""
+        self.title = ""
+        self.url = ""
+        self.toolbar = ""
+        self.url_bar = ""
+        self.bookmark_button = ""
+
+        self.db_setting()
+        self.cerate_widget()
+
+    def db_setting(self):
+        """
+        DB設定
+        """
+        # DB設定（日本語をそのまま保存）
+        self.history_db = TinyDB("./data/history.json")
+        self.bookmark_db = TinyDB("./data/bookmark.json")
+        self.Query = Query()
+        
+    def cerate_widget(self):
+        """
+        ウィジェット作成
+        """
+        browser_layout = QVBoxLayout()
         self.web_view = QWebEngineView()
 
-        # 別クラス
-        self.main_window = main_window
+        self.web_engine_setting()
+        self.select_initial_page()
+        self.set_page_information()
+        self.cerate_tool_bar()
 
-        # DB設定（日本語をそのまま保存）
-        self.history = TinyDB("./data/history.json")
-        self.bookmark = TinyDB("./data/bookmark.json")
-        self.Query = Query()
+        browser_layout.addWidget(self.toolbar)
+        browser_layout.addWidget(self.web_view)
+        self.setLayout(browser_layout)
 
-        # 初期ページの設定
-        if url == "":
-            self.web_view.setUrl("https://www.google.com")
-        else:
-            self.web_view.setUrl(url)
-
+    def web_engine_setting(self):
+        """
+        QWebEngine設定
+        """
         # PDF表示機能の有効化
         self.web_view.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)
         self.web_view.settings().setAttribute(QWebEngineSettings.PdfViewerEnabled, True)
@@ -36,31 +75,50 @@ class BrowserTab(QWidget):
         # ページタイトルの変更を検知
         self.web_view.titleChanged.connect(self.on_title_changed)
 
-        # ツールバーを作成
+    def select_initial_page(self):
+        """
+        初期ページ選択
+        """
+        if self.url == "":
+            self.web_view.setUrl("https://www.google.com")
+        else:
+            self.web_view.setUrl(self.url)
+
+    def set_page_information(self):
+        """
+        ページ情報設定
+        """
+        self.title = self.web_view.title()
+        self.url = self.web_view.url().toString()
+
+    def cerate_tool_bar(self):
+        """
+        ツールバー作成
+        """
         self.toolbar = QToolBar("メインツールバー")
 
         # 戻るボタン
-        self.back_button = QPushButton("")
-        self.back_button.setIcon(qta.icon("fa5s.arrow-left", color="white"))
-        self.back_button.clicked.connect(self.web_view.back)
-        self.toolbar.addWidget(self.back_button)
+        back_button = QPushButton("")
+        back_button.setIcon(qta.icon("fa5s.arrow-left", color="white"))
+        back_button.clicked.connect(self.web_view.back)
+        self.toolbar.addWidget(back_button)
 
         # 進むボタン
-        self.forward_button = QPushButton("")
-        self.forward_button.setIcon(qta.icon("fa5s.arrow-right", color="white"))
-        self.forward_button.clicked.connect(self.web_view.forward)
-        self.toolbar.addWidget(self.forward_button)
+        forward_button = QPushButton("")
+        forward_button.setIcon(qta.icon("fa5s.arrow-right", color="white"))
+        forward_button.clicked.connect(self.web_view.forward)
+        self.toolbar.addWidget(forward_button)
 
         # 再読込みボタンを作成
-        self.reload_button = QPushButton("")
-        self.reload_button.setIcon(qta.icon("fa5s.undo", color="white"))
-        self.reload_button.clicked.connect(self.reload_page)
-        self.toolbar.addWidget(self.reload_button)
+        reload_button = QPushButton("")
+        reload_button.setIcon(qta.icon("fa5s.undo", color="white"))
+        reload_button.clicked.connect(self.reload_page)
+        self.toolbar.addWidget(reload_button)
 
         # URLバー
         self.url_bar = QLineEdit()
         self.url_bar.setPlaceholderText("URLを入力して下さい")
-        self.url_bar.returnPressed.connect(self.load_url)
+        self.url_bar.returnPressed.connect(self.search_url)
         self.toolbar.addWidget(self.url_bar)
 
         # ブックマークボタン
@@ -69,12 +127,10 @@ class BrowserTab(QWidget):
         self.bookmark_button.clicked.connect(self.add_bookmark)
         self.toolbar.addWidget(self.bookmark_button)
 
-        self.layout.addWidget(self.toolbar)
-        self.layout.addWidget(self.web_view)
-        self.setLayout(self.layout)
-
-    # URLの検索
-    def load_url(self):
+    def search_url(self):
+        """
+        URL検索
+        """
         url = self.url_bar.text()
         if not url.startswith("http://") and not url.startswith("https://"):
             url = "http://" + url
@@ -82,57 +138,72 @@ class BrowserTab(QWidget):
 
     # 画面変更時の処理
     def on_title_changed(self):
-        # ページのタイトルとURLを取得
-        title = self.web_view.title()
-        url = self.web_view.url().toString()
+        """
+        ページ名変更時の処理
+        """
+        self.set_page_information()
+        self.synchronization_address_bar()
+        self.exclusion_google()
 
-        # アドレスバーのURLを変更
-        self.url_bar.setText(url)
+    def exclusion_google(self):
+        """
+        Googleの初期ページ等を処理から場外
+        """
+        if "http" not in self.title and "Google" not in self.title and "google" not in self.title:
+            # メインウインドウからタブ名同期メソッドの呼び出し
+            self.main_window.synchronization_tab_name(self.title[1:9])
+            self.add_history()
 
-        # Webページに遷移時の処理
-        if "http" not in title and "Google" not in title and "google" not in title:
-            # タブ名を同期
-            self.main_window.tab_name_synchronization(title[1:9])
+    def add_history(self):
+        """
+        履歴保存
+        """
+        self.history_db.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": self.title, "url": self.url})
 
-            # 履歴の保存
-            self.history.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": title, "url": url})
+    def judge_added_bookmark(self):
+        """
+        ブックマーク追加済み判定
+        """
+        bookmark_titles = [bookmark["title"] for bookmark in self.bookmark_db.all()]
 
-            # ブックマークボタン判定
-            bookmark_titles = [bookmark["title"] for bookmark in self.bookmark.all()]
+        if self.title in bookmark_titles:
+            self.bookmark_button.setIcon(qta.icon("fa5s.star", color="blue"))
+            self.bookmark_button.clicked.connect(self.remove_bookmark)
 
-            if title in bookmark_titles:
-                self.bookmark_button.setIcon(qta.icon("fa5s.star", color="blue"))
-                self.bookmark_button.clicked.connect(self.remove_bookmark)
+    def synchronization_address_bar(self):
+        """
+        アドレスバー同期
+        """
+        self.url_bar.setText(self.url)
 
-    # 再読み込み
     def reload_page(self):
+        """
+        ページ再読み込み
+        """
         self.web_view.reload()
 
-    # ブックマーク追加
     def add_bookmark(self):
-        # ページのタイトルとURLを取得
-        title = self.web_view.title()
-        url = self.web_view.url().toString()
-
-        # ブックマークの保存
-        self.bookmark.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": title, "url": url})
+        """
+        ブックマーク追加
+        """
+        self.bookmark_db.insert({"datetime":datetime.now().strftime("%Y年 %B %d日 (%A) %H:%M"), "title": self.title, "url": self.url})
         self.bookmark_button.setIcon(qta.icon("fa5s.star", color="blue"))
         self.bookmark_button.clicked.connect(self.remove_bookmark)
 
-    # ブックマーク削除
     def remove_bookmark(self):
-        # ページのタイトルを取得
-        title = self.web_view.title()
-        self.bookmark.remove(self.Query.title == title)
+        """
+        ブックマーク削除
+        """
+        self.bookmark_db.remove(self.Query.title == self.title)
         self.bookmark_button.setIcon(qta.icon("fa5s.star", color="white"))
         self.bookmark_button.clicked.connect(self.add_bookmark)
 
-    # ダウンロード
     def on_download_requested(self, download: QWebEngineDownloadRequest):
-        # 保存先、保存ファイル名の選択
+        """
+        ファイル保存
+        """
         save_path, _ = QFileDialog.getSaveFileName(self, "Save File",download.downloadDirectory() + r"/" + download.suggestedFileName())
 
         if save_path:
-            # ダウンロード先を指定して開始
             download.setDownloadFileName(save_path)
             download.accept()
