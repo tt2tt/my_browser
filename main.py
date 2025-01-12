@@ -93,7 +93,6 @@ class MainWindow(QMainWindow):
 
         self.add_new_tab(tab, tab_name)
 
-
     def add_new_tab(self, tab, tab_name):
         """
         タブ追加
@@ -129,11 +128,20 @@ def on_exit():
     """
     logger.info("処理終了")
 
+def exception_handler(exctype, value, traceback):
+    """
+    例外処理
+    """
+    logger.error("例外が発生しました", exc_info=(exctype, value, traceback))
+
 
 if __name__ == "__main__":
     # ロガーの呼び出し
     logger = MyLogger(log_file="./log/app.log", when="D", interval=1, backup_count=7).get_logger()
     logger.info("処理開始")
+
+    # 例外処理
+    sys.excepthook = exception_handler
 
     # メインウインドウの呼び出し
     app = QApplication(sys.argv)
