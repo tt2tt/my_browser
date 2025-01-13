@@ -28,7 +28,6 @@ class BrowserTab(QWidget):
         self.Query = ""
         self.web_view = ""
         self.title = ""
-        self.url = ""
         self.toolbar = ""
         self.url_bar = ""
         self.bookmark_button = ""

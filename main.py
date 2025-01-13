@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
         elif tab_name == "ブックマーク":
             tab = TableTab(main_window, tab_name)
         elif url != "":  # 履歴やブックマークからのページ遷移
-            tab = BrowserTab(main_window,url=url)
+            tab = BrowserTab(main_window,url = url)
 
         self.add_new_tab(tab, tab_name)
 
