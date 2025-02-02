@@ -1,6 +1,6 @@
 import sys
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QTabWidget, QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QMainWindow, QTabWidget, QPushButton, QHBoxLayout, QWidget
 from PySide6.QtGui import QAction
 
 from my_package.browser_tab import BrowserTab
@@ -24,7 +24,18 @@ class MainWindow(QMainWindow):
         self.tabs = ""
         self.tab_counter = ""
 
+        self.load_stylesheet("./qss/style.qss")
         self.cerate_widget()
+
+    def load_stylesheet(self, filename):
+        """
+        QSSファイル読み込み
+        """
+        try:
+            with open(filename, "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except FileNotFoundError:
+            print(f"Warning: {filename} が見つかりませんでした")
 
     def cerate_widget(self):
         """
@@ -51,11 +62,14 @@ class MainWindow(QMainWindow):
         self.tabs.tabBar().setLayout(QHBoxLayout())
         tab_layout = self.tabs.tabBar().layout()
         tab_layout.addStretch() 
+        tab_layout.setContentsMargins(0, 0, 0, 0)
         self.add_tab_button = QPushButton("+")
-        self.add_tab_button.setFixedSize(25, 25)
+        self.add_tab_button.setFixedSize(30, 25)
         self.add_tab_button.clicked.connect(lambda: self.select_new_tab("新しいタブ"))
         tab_layout.addWidget(self.add_tab_button)
-        tab_layout.setContentsMargins(0, 0, 0, 0)
+        tabBarContainer = QWidget()
+        tabBarContainer.setLayout(tab_layout)
+        self.tabs.setCornerWidget(tabBarContainer)
 
     def cerate_menu_bar(self):
         """

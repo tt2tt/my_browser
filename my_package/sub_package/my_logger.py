@@ -19,7 +19,7 @@ class MyLogger:
 
         # ファイルハンドラーを作成
         file_handler = TimedRotatingFileHandler(
-            log_file, when=when, interval=interval, backupCount=backup_count
+            log_file, when=when, interval=interval, backupCount=backup_count, encoding="utf-8"
         )
 
         # フォーマッターを設定

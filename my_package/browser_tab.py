@@ -98,19 +98,19 @@ class BrowserTab(QWidget):
 
         # 戻るボタン
         back_button = QPushButton("")
-        back_button.setIcon(qta.icon("fa5s.arrow-left", color="white"))
+        back_button.setIcon(qta.icon("fa5s.arrow-left", color="gray"))
         back_button.clicked.connect(self.web_view.back)
         self.toolbar.addWidget(back_button)
 
         # 進むボタン
         forward_button = QPushButton("")
-        forward_button.setIcon(qta.icon("fa5s.arrow-right", color="white"))
+        forward_button.setIcon(qta.icon("fa5s.arrow-right", color="gray"))
         forward_button.clicked.connect(self.web_view.forward)
         self.toolbar.addWidget(forward_button)
 
         # 再読込みボタンを作成
         reload_button = QPushButton("")
-        reload_button.setIcon(qta.icon("fa5s.undo", color="white"))
+        reload_button.setIcon(qta.icon("fa5s.undo", color="gray"))
         reload_button.clicked.connect(self.reload_page)
         self.toolbar.addWidget(reload_button)
 
@@ -122,7 +122,7 @@ class BrowserTab(QWidget):
 
         # ブックマークボタン
         self.bookmark_button = QPushButton("")
-        self.bookmark_button.setIcon(qta.icon("fa5s.star", color="white"))
+        self.bookmark_button.setIcon(qta.icon("fa5s.star", color="gray"))
         self.bookmark_button.clicked.connect(self.add_bookmark)
         self.toolbar.addWidget(self.bookmark_button)
 
@@ -194,7 +194,7 @@ class BrowserTab(QWidget):
         ブックマーク削除
         """
         self.bookmark_db.remove(self.Query.title == self.title)
-        self.bookmark_button.setIcon(qta.icon("fa5s.star", color="white"))
+        self.bookmark_button.setIcon(qta.icon("fa5s.star", color="gray"))
         self.bookmark_button.clicked.connect(self.add_bookmark)
 
     def on_download_requested(self, download: QWebEngineDownloadRequest):
