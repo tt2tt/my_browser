@@ -1,0 +1,36 @@
+/* メニューバーの背景色 */
+QMenuBar {
+    background-color: #2c3e50;
+    color: white;
+    font-size: 14px;
+}
+
+/* メニューバーのアイテム */
+QMenuBar::item {
+    background: transparent;
+    padding: 5px 10px;
+}
+
+/* メニューバーのアイテム（選択時） */
+QMenuBar::item:selected {
+    background: #34495e;
+}
+
+/* QMenu（クリック時に表示されるメニュー）の背景色 */
+QMenu {
+    background-color: #2c3e50;
+    border: 1px solid #34495e;
+}
+
+/* QMenuのメニューアイテム */
+QMenu::item {
+    background: transparent;
+    color: white;
+    padding: 5px 20px;
+}
+
+/* QMenuのメニューアイテム（選択時） */
+QMenu::item:selected {
+    background-color: #3498db;
+    color: white;
+}

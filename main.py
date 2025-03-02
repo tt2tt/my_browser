@@ -1,10 +1,11 @@
 import sys
 
-from PySide6.QtWidgets import QApplication, QMainWindow, QTabWidget, QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QMainWindow, QTabWidget, QPushButton, QHBoxLayout, QWidget
 from PySide6.QtGui import QAction
 
-from browser_tab import BrowserTab
-from table_tab import TableTab
+from my_package.browser_tab import BrowserTab
+from my_package.table_tab import TableTab
+from my_package.sub_package.my_logger import MyLogger
 
 class MainWindow(QMainWindow):
     """
@@ -23,7 +24,18 @@ class MainWindow(QMainWindow):
         self.tabs = ""
         self.tab_counter = ""
 
+        self.load_stylesheet("./qss/style.qss")
         self.cerate_widget()
+
+    def load_stylesheet(self, filename):
+        """
+        QSSファイル読み込み
+        """
+        try:
+            with open(filename, "r", encoding="utf-8") as f:
+                self.setStyleSheet(f.read())
+        except FileNotFoundError:
+            print(f"Warning: {filename} が見つかりませんでした")
 
     def cerate_widget(self):
         """
@@ -50,11 +62,14 @@ class MainWindow(QMainWindow):
         self.tabs.tabBar().setLayout(QHBoxLayout())
         tab_layout = self.tabs.tabBar().layout()
         tab_layout.addStretch() 
+        tab_layout.setContentsMargins(0, 0, 0, 0)
         self.add_tab_button = QPushButton("+")
-        self.add_tab_button.setFixedSize(25, 25)
+        self.add_tab_button.setFixedSize(30, 25)
         self.add_tab_button.clicked.connect(lambda: self.select_new_tab("新しいタブ"))
         tab_layout.addWidget(self.add_tab_button)
-        tab_layout.setContentsMargins(0, 0, 0, 0)
+        tabBarContainer = QWidget()
+        tabBarContainer.setLayout(tab_layout)
+        self.tabs.setCornerWidget(tabBarContainer)
 
     def cerate_menu_bar(self):
         """
@@ -82,16 +97,15 @@ class MainWindow(QMainWindow):
             url: 検索URL
         """
         if tab_name == "新しいタブ":
-            tab = BrowserTab(main_window)
+            tab = BrowserTab(self)
         elif tab_name == "履歴":
-            tab = TableTab(main_window, tab_name)
+            tab = TableTab(self, tab_name)
         elif tab_name == "ブックマーク":
-            tab = TableTab(main_window, tab_name)
+            tab = TableTab(self, tab_name)
         elif url != "":  # 履歴やブックマークからのページ遷移
-            tab = BrowserTab(main_window,url=url)
+            tab = BrowserTab(self, url = url)
 
         self.add_new_tab(tab, tab_name)
-
 
     def add_new_tab(self, tab, tab_name):
         """
@@ -122,10 +136,30 @@ class MainWindow(QMainWindow):
         if self.tabs.count() > 1:
             self.tabs.removeTab(tab_index)
 
+def on_exit():
+    """
+    終了時の処理
+    """
+    logger.info("処理終了")
+
+def exception_handler(exctype, value, traceback):
+    """
+    例外処理
+    """
+    logger.error("例外が発生しました", exc_info=(exctype, value, traceback))
+
 
 if __name__ == "__main__":
+    # ロガーの呼び出し
+    logger = MyLogger(log_file="./log/app.log", when="D", interval=1, backup_count=7).get_logger()
+    logger.info("処理開始")
+
+    # 例外処理
+    sys.excepthook = exception_handler
+
     # メインウインドウの呼び出し
     app = QApplication(sys.argv)
+    app.aboutToQuit.connect(on_exit)
     main_window = MainWindow()
     main_window.select_new_tab("新しいタブ")
     main_window.show()
