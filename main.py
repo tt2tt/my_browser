@@ -97,13 +97,13 @@ class MainWindow(QMainWindow):
             url: 検索URL
         """
         if tab_name == "新しいタブ":
-            tab = BrowserTab(main_window)
+            tab = BrowserTab(self)
         elif tab_name == "履歴":
-            tab = TableTab(main_window, tab_name)
+            tab = TableTab(self, tab_name)
         elif tab_name == "ブックマーク":
-            tab = TableTab(main_window, tab_name)
+            tab = TableTab(self, tab_name)
         elif url != "":  # 履歴やブックマークからのページ遷移
-            tab = BrowserTab(main_window,url = url)
+            tab = BrowserTab(self, url = url)
 
         self.add_new_tab(tab, tab_name)
 
